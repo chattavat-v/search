@@ -16,10 +16,10 @@ router.get('/', async (req, res) => {
   };
 });
 
-// @route GET /api/blog/search
+// @route GET /api/blog/search/text
 // @desc Search all data
 // @access Public
-router.get('/search', async (req, res) => {
+router.get('/search/text', async (req, res) => {
   try {
     let text = req.query.text;
     await Blog
