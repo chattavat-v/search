@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 });
 
 // @route GET /api/blog/search
-// desc Search all data
+// @desc Search all data
 // @access Public
 router.get('/search', async (req, res) => {
   try {
@@ -33,6 +33,24 @@ router.get('/search', async (req, res) => {
           });
         });
       });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  };
+});
+
+// @route GET /api/blog/search/option
+// @desc Search data by option
+// @access Public
+router.get('/search/option', async (req, res) => {
+  try {
+    const { name, body } = req.query;
+    const options = {
+      name: { $regex: name },
+      body: { $regex: body }
+    };
+    let blogs = await Blog.find(options);
+    res.json(blogs);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
