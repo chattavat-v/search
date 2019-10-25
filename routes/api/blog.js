@@ -57,4 +57,46 @@ router.get('/search/option', async (req, res) => {
   };
 });
 
+// @route GET /api/blog/search
+// @desc Search with select mode between search fulltext or with option
+// @access Public
+router.get('/search', async (req, res) => {
+  try {
+    const { mode, name, body, text } = req.query;
+
+    if(mode === 'true') {
+      const options = {
+        name: { $regex: name },
+        body: { $regex: body }
+      };
+      await Blog
+        .find(options)
+        .exec((err, blogs) => {
+          Blog.find(options).countDocuments().exec((err, count) => {
+            if (err) return next(err);
+            res.json({
+              blogs: blogs,
+              count: count
+            });
+          });
+        });
+    } else {
+      await Blog
+        .find({ $text: { $search: text } })
+        .exec((err, blogs) => {
+          Blog.find({ $text: { $search: text } }).countDocuments().exec((err, count) => {
+            if (err) return next(err);
+            res.json({
+              blogs: blogs,
+              count: count
+            });
+          });
+        });
+    };
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  };
+});
+
 module.exports = router;
